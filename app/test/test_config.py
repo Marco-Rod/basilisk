@@ -21,6 +21,19 @@ class TestDevelopmentConfig(TestCase):
             app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///' + os.path.join(basedir, 'basilisk.db')
         )
     
+class TestTestingConfig(TestCase):
+    def create_app(self):
+        app.config.from_object('app.main.config.TestingConfig')
+        return app
+
+    def test_app_is_testing(self):
+        self.assertFalse(app.config['SECRET_KEY'] is 'key_ultra_super_secure')
+        self.assertTrue(app.config['DEBUG'] is True)
+        self.assertFalse(current_app is None)
+        self.assertFalse(
+            app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///' + os.path.join(basedir, 'basilisk-test.db')
+        )
+
 
 class TestProductionConfig(TestCase):
     def create_app(self):
